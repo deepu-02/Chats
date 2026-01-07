@@ -1,110 +1,130 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>College Chatbot</title>
+    <title>TPGIT ChatBot</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .chatbox {
-            background: white;
-            width: 420px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 15px;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 10px;
-            background: #4a6cf7;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #3b5be3;
-        }
-        .reply {
-            margin-top: 15px;
-            background: #f1f1f1;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 15px;
-        }
+        body { font-family: Arial; background:#f2f2f2; margin:0; }
+        .chat-box { width: 100%; max-width: 450px; margin: 40px auto; background:#fff; padding: 20px; border-radius: 10px; }
+        .messages { height: 350px; overflow-y:auto; border:1px solid #ddd; padding:10px; border-radius:5px; }
+        .msg { margin: 8px 0; padding: 8px; border-radius:6px; width: fit-content; max-width:90%; }
+        .user { background:#d1e7ff; margin-left:auto; }
+        .bot { background:#e8e8e8; }
+        input { width:75%; padding:10px; border-radius:5px; border:1px solid #aaa; }
+        button { width:22%; padding:10px; background:#007bff; color:white; border:none; border-radius:5px; }
     </style>
 </head>
 <body>
 
-<div class="chatbox">
-    <h2>🤖 College Chatbot</h2>
+<div class="chat-box">
+    <h2>TPGIT ChatBot</h2>
+    <div class="messages" id="chat"></div>
 
-    <input type="text" id="userInput" placeholder="Ask about admissions, courses, hostel..." />
-    <button onclick="getReply()">Send</button>
-
-    <div id="replyBox" class="reply" style="display:none;"></div>
+    <input type="text" id="userInput" placeholder="Ask something...">
+    <button onclick="send()">Send</button>
 </div>
 
 <script>
-    const collegeData = {
-        "admission": "Admissions are based on Counseling.",
-        "courses": "We offer CSE, ECE, EEE, Mechanical, Civil and Robotics.",
-        "timings": "College timing is 9 AM to 5 PM, Monday to Friday.",
-        "hostel": "Hostel available for boys and girls with mess.",
-        "contact": "Email: info@tpgit.edu.in, Phone: 0416-2267762",
-        "fees": "Fees depend on the course and semester. Contact office for details.",
-        "exam": "Semester exams follow Anna University schedule.",
-        "results": "Results are published on the Anna University website.",
-        "library": "Library open from 9 AM to 5 PM. Borrow up to 5 books.",
-        "bus": "Bus facilities are not available.",
-        "sports": "Facilities for cricket, football, basketball and indoor games.",
-        "clubs": "Coding, robotics, arts and music clubs are available.",
-        "scholarship": "Community and Pragati scholarships are available.",
-        "principal": "Principal: Letitia",
-        "events": "Annual cultural and technical events are held in December.",
-        "placement": "Good placement records. Top companies visit every year.",
-        "address": "Thanthai Periyar Government Institute of Technology, Bagayam, Vellore."
-    };
+let data = {
 
-    function getReply() {
-        const input = document.getElementById("userInput").value.toLowerCase();
-        const replyBox = document.getElementById("replyBox");
-        let response = "";
+    /* College Information */
+    "tpgit":"Thanthai Periyar Government Institute of Technology is a government engineering college.",
+    "established":"TPGIT was established in the year 1990.",
+    "location":"TPGIT is located at Bagayam, Vellore.",
+    "address":"TPGIT, Bagayam, Vellore – 632002.",
+    "affiliation":"TPGIT is affiliated to Anna University, Chennai.",
+    "governance":"TPGIT is under Directorate of Technical Education, Tamil Nadu.",
 
-        for (let key in collegeData) {
-            if (input.includes(key)) {
-                response = collegeData[key];
-                break;
-            }
+    /* Working Time */
+    "working":"College working hours are 9 AM to 5 PM, Monday to Friday.",
+
+    /* Admission */
+    "admission":"Admissions are done through Anna University counselling.",
+    "eligibility":"Candidates must pass 12th with Maths, Physics and Chemistry.",
+    "application":"Application is through online counselling only.",
+    "reservation":"7.5 percent reservation students do not have to pay college fees.",
+
+    /* Courses */
+    "ug":"UG courses include B.E. CSE, ECE, EEE, Mechanical, Civil and Robotics.",
+    "pg":"PG courses include M.E. Applied Electronics, Manufacturing and Structural.",
+    "mca":"MCA course is available.",
+    "parttime":"Part-time engineering courses are available.",
+    "robotics":"Robotics engineering course is available at UG level.",
+
+    /* Fees */
+    "fees":"College fees vary based on category. First graduate: Rs.6500, Non-first graduate: Rs.4500.",
+    "first graduate":"First graduate college fee is Rs.6500.",
+    "non first graduate":"Non-first graduate college fee is Rs.4500.",
+    "mess":"Mess fees are approximately Rs.1500 per month.",
+    "seven point five":"Students under 7.5 percent reservation do not pay college fees.",
+
+    /* Academic */
+    "calendar":"Semester system is followed as per Anna University academic calendar.",
+    "examination":"Examinations are conducted as per Anna University schedule.",
+    "results":"Results are published on the Anna University website.",
+
+    /* Facilities */
+    "library":"Library is open from 9 AM to 5 PM on working days.",
+    "laboratory":"Well equipped laboratories are available for all departments.",
+    "wifi":"Campus has WiFi facility for students.",
+    "facilities":"Campus facilities include library, hostel, labs and sports ground.",
+
+    /* Hostel */
+    "hostel":"Hostel facility is available for both boys and girls.",
+    "hostelfee":"Total hostel fee for new admission is Rs.14,800.",
+    "onetimefee":"One time hostel fee is Rs.5,250.",
+    "yearlyfee":"Yearly hostel fee is Rs.9,550.",
+
+    /* Placement */
+    "placement":"TPGIT has good placement support.",
+    "highestpackage":"Highest package offered is around Rs.8 LPA.",
+    "averagepackage":"Average package is around Rs.4 to 5 LPA.",
+    "company":"Companies include TVS, Yamaha and QSpiders.",
+
+    /* Student Life */
+    "sports":"Sports facilities are available for indoor and outdoor games.",
+    "events":"Cultural and technical events are conducted every year.",
+    "faculty":"College has experienced and qualified faculty members.",
+    "campus":"College has a green and peaceful campus environment.",
+    "safety":"Campus is secured with security staff and CCTV surveillance.",
+    "antiragging":"Anti-ragging committee is available to ensure student safety.",
+
+    /* Support */
+    "scholarship":"Government scholarships are available for eligible students.",
+    "canteen":"Hygienic canteen facility is available inside the campus.",
+    "medical":"Basic medical and first aid facilities are available.",
+
+    /* Contact */
+    "helpdesk":"Help desk assistance is available during working hours.",
+    "contact":"College contact number is 0416-2267762"
+};
+
+function send(){
+    let input = document.getElementById("userInput").value.toLowerCase().trim();
+    if(input === "") return;
+
+    display(input,"user");
+
+    let reply = "Sorry, no information found. Try asking about courses, fees, hostel, admission or placement.";
+
+    for(let key in data){
+        if(input.includes(key)){
+            reply = data[key];
+            break;
         }
-
-        if (response === "") {
-            response = "Sorry 😅 I didn’t get that. Try asking about courses, fees, hostel, placements.";
-        }
-
-        replyBox.style.display = "block";
-        replyBox.innerHTML = "<strong>Bot:</strong> " + response;
     }
+
+    setTimeout(()=>display(reply,"bot"),400);
+    document.getElementById("userInput").value="";
+}
+
+function display(text,from){
+    let chat = document.getElementById("chat");
+    let msg = document.createElement("div");
+    msg.className = "msg " + from;
+    msg.innerText = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+}
 </script>
 
 </body>
